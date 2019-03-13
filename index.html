@@ -1,0 +1,73 @@
+<html>
+	<body>
+		<h1 id="currentTime"></h1>
+		<div id="hue"></div>
+		<div id="font"></div>
+		<script>
+			
+			var loadCals = function(){
+				function setColors() {
+					var date = new Date();
+					//var gmtDate = date;
+					//date.setHours(14);
+					//date.setMinutes(0);
+					var gmtDate = new Date(date.valueOf() + date.getTimezoneOffset() * 60000);
+					var minutes = (gmtDate.getHours() % 12) * 60 + gmtDate.getMinutes();
+					
+					var hue = 0;
+					if (minutes !== 0){
+						var hue = 255 / (720/ minutes);
+					}
+					
+					if (gmtDate.getHours() >= 12) {
+						var hue = 255 - hue;
+					}
+					
+					var fontHue = hue + 127;
+					
+					if (fontHue > 255) {
+						fontHue = fontHue % 255;
+					}	
+					
+					var hexValue = Math.round(hue).toString(16);
+					var hexFontValue = Math.round(fontHue).toString(16);
+					if (hexValue.length === 1) {
+						hexValue = "0" + hexValue;
+					}
+					if (hexFontValue.length === 1) {
+						hexFontValue = "0" + hexFontValue;
+					}
+					
+					var body = document.getElementsByTagName('body')[0];
+					
+					var color = '#' + hexValue + hexValue + hexValue;
+					var fontColor = '#' + hexFontValue + hexFontValue + hexFontValue;
+					
+					body.setAttribute('style', 'background-color: ' + color + ';color: '+ fontColor + ';');
+					
+					var h = gmtDate.getHours();
+					var m = gmtDate.getMinutes();
+					var s = gmtDate.getSeconds();
+					
+					m = (m < 10) ? "0" + m : m;
+					h = (h < 10) ? "0" + h : h;
+					s = (s < 10) ? "0" + s : s;
+					
+					document.getElementById('currentTime').innerHTML = "Current Time: " + h + ":" + m + ":" + s + " GMT";
+					document.getElementById('hue').innerHTML = "Current background color: " + color;
+					document.getElementById('font').innerHTML = "Current font color: " + fontColor;
+				}
+				setColors();
+				setInterval(setColors, 500);
+			};
+
+			if (
+				document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)
+			) {
+			  loadCals();
+			} else {
+			  document.addEventListener("DOMContentLoaded", loadCals);
+			}
+		</script>
+	</body>
+</html>
